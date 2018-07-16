@@ -2,16 +2,12 @@
 
 # Options
 downloadDir="$HOME/Pictures/xkcd/"
+tmpDir="/tmp/"
 zoomLevel=200
 resolution=1920x1080
 bgColor=000000
 
-case $2 in
-	last)
-	file=$(cat /tmp/randomXKCD)
-	echo $file
-	;;
-	*)
+if [ "$2" != "last" ]; then
 	# Test connection to xkcd.com
 	wget -q --spider "https://xkcd.com"
 
@@ -40,21 +36,24 @@ case $2 in
 		# get random previously downloaded comic
 		file=$(find "$downloadDir" -type f | shuf -n 1)
 	fi
-	echo $file > /tmp/randomXKCD
-esac
+	
+	# Convert and resize inmage
+	convert "$file" -filter lanczos -distort resize $zoomLevel% \
+				-resize $resolution\> \
+				-background none -gravity center -extent $resolution \
+				"$tmpDir""randomXKCD.png"
+fi
 
 case $1 in
 	disp)
 	# Display comic
-	caption=$(basename "${file%%.*}")
-	feh -qFZ --zoom $zoomLevel --info "echo $caption" "$file"
+	feh -qF /tmp/randomXKCD.png &
+	echo $! > "$tmpDir""randomXKCD"
 	;;
 	lock)
-	convert "$file" -filter lanczos -distort resize $zoomLevel% \
-					-resize $resolution\> \
-					-background none -gravity center -extent $resolution \
-					/tmp/randomXKCD.png
-	i3lock -c $bgColor -i /tmp/randomXKCD.png
+	i3lock -c $bgColor -i "$tmpDir""randomXKCD.png"
+	# terminate potential previous feh
+	kill -SIGTERM $(cat "$tmpDir""randomXKCD")
 	;;
 	*)
 esac
