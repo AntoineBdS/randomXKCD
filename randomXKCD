@@ -2,7 +2,9 @@
 
 # Options
 downloadDir="$HOME/Pictures/xkcd/"
-zoomLevel=150
+zoomLevel=200
+resolution=1920x1080
+bgColor=000000
 
 
 # Test connection to xkcd.com
@@ -34,6 +36,17 @@ else # no connection
 	file=$(find "$downloadDir" -type f | shuf -n 1)
 fi
 
-# Display comic
-caption=$(basename "${file%%.*}")
-feh -qFZ --zoom $zoomLevel --info "echo $caption" "$file"
+case $1 in
+	disp)
+	# Display comic
+	caption=$(basename "${file%%.*}")
+	feh -qFZ --zoom $zoomLevel --info "echo $caption" "$file"
+	;;
+	lock)
+	convert "$file" -filter lanczos -distort resize $zoomLevel% \
+					-resize $resolution \
+					-background none -gravity center -extent $resolution\> /tmp/lock.png
+	i3lock -c $bgColor -i /tmp/lock.png
+	;;
+	*)
+esac
