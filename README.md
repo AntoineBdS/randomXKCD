@@ -4,6 +4,7 @@ Download a random xkcd comic and display it with feh or use it as a lockscreen w
 ## Dependencies
 - feh
 - i3lock
+- ImageMagick
 
 ## Usage
 `randomXKCD <disp|lock> [last]`
