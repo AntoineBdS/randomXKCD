@@ -34,7 +34,7 @@ Lock the screen and display a random xkcd.
 Notify by displaying an image and lock reusing the same image.
 
 ## Options
-Some options are available in the script:
+Some options are available inside the script:
 
 - downloadDir
 - tmpDir
