@@ -1,5 +1,5 @@
 # randomXKCD
-Download a random XKCD comic and display it with feh or use it as a lockscreen with i3lock. If no internet connection is available, use a previously downloaded image.dd
+Download a random xkcd comic and display it with feh or use it as a lockscreen with i3lock. If no internet connection is available, use a previously downloaded image.dd
 
 ## Dependencies
 - feh
