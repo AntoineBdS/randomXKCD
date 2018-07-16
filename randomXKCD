@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Options
+downloadDir="$HOME/Pictures/xkcd/"
+zoomLevel=150
+
+
+# Test connection to xkcd.com
+wget -q --spider "https://xkcd.com"
+
+if [ $? -eq 0 ]; then  # xkcd reachable
+	# find number of the last comic
+	last=$(curl -s "https://xkcd.com/info.0.json" | jq -r '.num')
+	# Get a random comic number beetween 1 and last
+	RANDOM=`date '+%s'`
+	num=$(( ( RANDOM % last )  + 1 ))
+	# pick another number if random one is 404 (Thanks Randal...)
+	while [ $num -eq 404 ]; do
+		num=$(( ( RANDOM % last )  + 1 ))
+	done
+	
+	# Get info of selected comic
+	eval "$(curl -s "https://xkcd.com/$num/info.0.json" | \
+			jq -r '@sh "link=\(.img) title=\(.safe_title)"')"
+			
+	# Download it
+	mkdir -p "$downloadDir"
+	ext=${link##*.}
+	file="$downloadDir$num - $title.$ext"
+	wget --adjust-extension -qO "$file" "$link"
+	
+else # no connection
+	# get random previously downloaded comic
+	file=$(find "$downloadDir" -type f | shuf -n 1)
+fi
+
+# Display comic
+caption=$(basename "${file%%.*}")
+feh -qFZ --zoom $zoomLevel --info "echo $caption" "$file"
