@@ -4,8 +4,9 @@
 downloadDir="$HOME/Pictures/xkcd/"
 tmpDir="/tmp/"
 zoomLevel=200
-resolution=1920x1080
 bgColor=000000
+#resolution=1920x1080
+resolution=$(xrandr | grep '*' | tr -s " " | cut -d ' ' -f2)
 
 if [ "$2" != "last" ]; then
 	# Test connection to xkcd.com
