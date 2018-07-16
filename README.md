@@ -1,13 +1,42 @@
 # randomXKCD
-Download and display a random XKCD comic in fullscreen with feh. If no internet connection is available, display a previously downloaded one.
+Download a random XKCD comic and display it with feh or use it as a lockscreen with i3lock. If no internet connection is available, use a previously downloaded image.dd
 
-## Why?
-I write this script to work in conjunction with xautolock like this:
+## Dependencies
+- feh
+- i3lock
 
-`xautolock -time 10 -notify 60 -notifier randomXKCD -locker 'i3lock -c 000000'`
+## Usage
+`randomXKCD <disp|lock> [last]`
 
-This has to purpose. The obvious one is to display the comic as a warning before locking the computer. The second is to get a little chuckle when unlocking it. Effectively, feh keep displaying the image behind the lock so it is the first thing to appear when unlocking.
+- disp: display a comic
+- locl: lock the screen and use a comic as lockscreen
+- last: use the last image used
 
-This behavious can easly be changed by killing feh after lock. e.g:
+### Examples
+This script is intended to be used in conjunction with xautolock in the following ways:
 
-`xautolock -time 10 -notify 60 -notifier randomXKCD -locker 'i3lock -c 000000; pkill feh'`
+#### Notify
+`xautolock -time 10 -notify 60 -notifier 'randomXKCD disp' -locker 'i3lock -c 000000'`
+
+Notify before lock by displaying an xkcd image. The image will still be displayed upon unlocking. To avoid that, you can terminate feh upon locking using the PID of feh saved in the tmp directory:
+
+`xautolock -time 10 -notify 60 -notifier 'randomXKCD disp' -locker 'i3lock -c 000000; kill -SIGTERM $(cat "/tmp/randomXKCD")'`
+
+#### Lock
+`xautolock -time 10 -locker 'randomXKCD lock'`
+
+Lock the screen and display a random xkcd.
+
+#### Notify and lock
+`xautolock -time 10 -notify 60 -notifier 'randomXKCD disp' -locker  -locker 'randomXKCD lock last'`
+
+Notify by displaying an image and lock reusing the same image.
+
+## Options
+Some options are available in the script:
+
+- downloadDir
+- tmpDir
+- zoomLevel (in percent)
+- bgColor (back ground colour given in 3-byte format: rrggbb, same as i3lock -c option)
+- resolution (autodetected by default with xrandr)
